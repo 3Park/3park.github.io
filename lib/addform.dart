@@ -36,16 +36,15 @@ class _AddFromState extends State<AddForm>
       low = widget.historyItem!.low;      
     }
 
-    widget.controller1.text = high;
-    widget.controller2.text = low;
-
     var heightValue = MediaQuery.of(context).size.height / 100.0;
     var widthValue = MediaQuery.of(context).size.width / 100.0;
 
     var inputMax = high;
     var inputMin = low;
 
-    
+    widget.controller1.text = inputMax;
+    widget.controller2.text = inputMin;
+
 
     return Material(
       child:  Column(
