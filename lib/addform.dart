@@ -7,6 +7,8 @@ class AddForm extends StatefulWidget
 {
 
   PressureClass? historyItem;
+  var inputMax = "";
+  var inputMin = "";
 
   AddForm(
     {super.key,this.historyItem});
@@ -39,11 +41,18 @@ class _AddFromState extends State<AddForm>
     var heightValue = MediaQuery.of(context).size.height / 100.0;
     var widthValue = MediaQuery.of(context).size.width / 100.0;
 
-    var inputMax = high;
-    var inputMin = low;
+    if(widget.inputMax.isEmpty)
+    {
+        widget.inputMax = high;     
+    }
+      
+    if(widget.inputMin.isEmpty)
+    {
+        widget.inputMin = low;     
+    }
 
-    widget.controller1.text = inputMax;
-    widget.controller2.text = inputMin;
+    widget.controller1.text =  widget.inputMax;
+    widget.controller2.text = widget.inputMin;
 
 
     return Material(
@@ -57,7 +66,7 @@ class _AddFromState extends State<AddForm>
             SizedBox(width: widthValue * 30,
                     child:  GestureDetector(onTap: () => FocusScope.of(context).unfocus(),
                             child:TextField(decoration: const InputDecoration(hintText: "정상 : 120 미만", labelText: "수축기(높은수치) : "),
-                            onChanged: (text) => { inputMax = text},
+                            onChanged: (text) => { widget.inputMax = text},
                             keyboardType: TextInputType.number,
                             controller: widget.controller1,
                             ),
@@ -69,7 +78,7 @@ class _AddFromState extends State<AddForm>
             SizedBox(width: widthValue * 30,
                     child: GestureDetector(onTap: () => FocusScope.of(context).unfocus(),
                             child:TextField(decoration: const InputDecoration(hintText: "정상 : 80 미만", labelText: "이완기(낮은수치) : "),
-                            onChanged: (text) => { inputMin = text},
+                            onChanged: (text) => { widget.inputMin = text},
                             keyboardType: TextInputType.number,
                             controller: widget.controller2,
                             ),
@@ -86,13 +95,13 @@ class _AddFromState extends State<AddForm>
           children: [
             SizedBox(width: 100,height: 100, child: IconButton(onPressed: () 
             {
-              if(inputMax.isEmpty || inputMin.isEmpty)
+              if(widget.inputMax.isEmpty || widget.inputMin.isEmpty)
               {
                 Navigator.pop(context);
               }
               else
               {
-                Navigator.pop(context,PressureClass(time,inputMax,inputMin)); 
+                Navigator.pop(context,PressureClass(time,widget.inputMax,widget.inputMin)); 
               }
             }, icon: const Icon(Icons.check_circle,size: 50,)),),
             SizedBox(width: 100,height: 100, child: IconButton(onPressed: () {Navigator.pop(context);}, icon: const Icon(Icons.cancel,size: 50,)),),
