@@ -77,10 +77,12 @@ class AddForm extends StatelessWidget
             {
               if(inputMax.isEmpty || inputMin.isEmpty)
               {
+                print("1111");
                 Navigator.pop(context);
               }
               else
               {
+                 print("2222");
                 Navigator.pop(context,PressureClass(time,inputMax,inputMin)); 
               }
             }, icon: const Icon(Icons.check_circle,size: 50,)),),
