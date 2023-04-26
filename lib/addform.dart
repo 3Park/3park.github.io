@@ -3,7 +3,7 @@
 import 'package:bloodpressure/pressureclass.dart';
 import 'package:flutter/material.dart';
 
-class AddForm extends StatelessWidget
+class AddForm extends StatefulWidget
 {
 
   PressureClass? historyItem;
@@ -15,6 +15,13 @@ class AddForm extends StatelessWidget
   TextEditingController controller2 = TextEditingController();
 
   @override
+  State<AddForm> createState() => _AddFromState();
+}
+
+class _AddFromState extends State<AddForm>
+{
+
+@override
   Widget build(BuildContext context) {
 
     DateTime now = DateTime.now();
@@ -22,15 +29,15 @@ class AddForm extends StatelessWidget
     String high = "";
     String low = "";
 
-    if(historyItem != null)
+    if(widget.historyItem != null)
     {
-      time = historyItem!.time;
-      high = historyItem!.high;
-      low = historyItem!.low;      
+      time = widget.historyItem!.time;
+      high = widget.historyItem!.high;
+      low = widget.historyItem!.low;      
     }
 
-    controller1.text = high;
-    controller2.text = low;
+    widget.controller1.text = high;
+    widget.controller2.text = low;
 
     var heightValue = MediaQuery.of(context).size.height / 100.0;
     var widthValue = MediaQuery.of(context).size.width / 100.0;
@@ -51,9 +58,9 @@ class AddForm extends StatelessWidget
             SizedBox(width: widthValue * 30,
                     child:  GestureDetector(onTap: () => FocusScope.of(context).unfocus(),
                             child:TextField(decoration: const InputDecoration(hintText: "정상 : 120 미만", labelText: "수축기(높은수치) : "),
-                            onSubmitted: (text) => { inputMax = text},
+                            onChanged: (text) => { inputMax = text},
                             keyboardType: TextInputType.number,
-                            controller: controller1,
+                            controller: widget.controller1,
                             ),
                             ),
                             ),
@@ -63,9 +70,9 @@ class AddForm extends StatelessWidget
             SizedBox(width: widthValue * 30,
                     child: GestureDetector(onTap: () => FocusScope.of(context).unfocus(),
                             child:TextField(decoration: const InputDecoration(hintText: "정상 : 80 미만", labelText: "이완기(낮은수치) : "),
-                            onSubmitted: (text) => { inputMin = text},
+                            onChanged: (text) => { inputMin = text},
                             keyboardType: TextInputType.number,
-                            controller: controller2,
+                            controller: widget.controller2,
                             ),
                             ),
                             ),
@@ -97,5 +104,5 @@ class AddForm extends StatelessWidget
       ),
     );  
   }
-
+  
 }
