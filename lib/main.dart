@@ -1,4 +1,4 @@
-import 'dart:html';
+
 
 import 'package:bloodpressure/addform.dart';
 import 'package:bloodpressure/pressureclass.dart';
@@ -82,15 +82,24 @@ class _MyHomePageState extends State<MyHomePage> {
           var width = MediaQuery.of(context).size.width / 100.0;
          _listItems.forEach((item) {
             items.add(
-                        Row(mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
                                 const Icon(Icons.timelapse),
                                 SizedBox(width: width * 0.5,),
                                 Text("일시 : ${item.time}"),
+                ],),
+                                
+                                Row(mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                                
                                 SizedBox(width: width * 4,),
-                                Text("수축기(높은값) : ${item.high}"),
+                                FittedBox(child: Text("수축기(높은값) : ${item.high}"),),
                                 SizedBox(width: width * 4,),
-                                Text("이완기(낮은값) : ${item.low}"),
+                                FittedBox(child: Text("이완기(낮은값) : ${item.low}"),),                                
                                 IconButton(onPressed: () async => 
                                 {  
                                    resultItem = await Navigator.push(context, MaterialPageRoute(builder: (context) => AddForm(historyItem:item))), 
@@ -113,6 +122,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ],
                                 )
 
+              ],),
+                        
                                     
                         );
                 
@@ -141,6 +152,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
+
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
@@ -151,9 +163,16 @@ class _MyHomePageState extends State<MyHomePage> {
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
         child: 
-        ListView(
-          children: 
-          getList(),)
+        SizedBox(
+          width: (MediaQuery.of(context).size.width / 100 * 90),
+          height: (MediaQuery.of(context).size.height / 100 * 90),
+          child: 
+            ListView(
+              children: 
+                getList(),
+                ),
+              ),
+        
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _callAddForm,
