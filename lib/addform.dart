@@ -44,24 +44,20 @@ class AddForm extends StatelessWidget
         children: [
            
             SizedBox(width: widthValue * 30,
-                    child:  GestureDetector(onTap: () => FocusScope.of(context).unfocus(),
-                            child:TextField(decoration: const InputDecoration(hintText: "정상 : 120 미만", labelText: "수축기(높은수치) : "),
+                    child:  TextField(decoration: const InputDecoration(hintText: "정상 : 120 미만", labelText: "수축기(높은수치) : "),
                             onChanged: (text) => { inputMax = text},
                             keyboardType: TextInputType.number,
                             controller: controller1,
-                            ),
                             ),
                             ),
            
             SizedBox(width: widthValue * 10,),
 
             SizedBox(width: widthValue * 30,
-                    child: GestureDetector(onTap: () => FocusScope.of(context).unfocus(),
-                            child:TextField(decoration: const InputDecoration(hintText: "정상 : 80 미만", labelText: "이완기(낮은수치) : "),
+                    child: TextField(decoration: const InputDecoration(hintText: "정상 : 80 미만", labelText: "이완기(낮은수치) : "),
                             onChanged: (text) => { inputMin = text},
                             keyboardType: TextInputType.number,
                             controller: controller2,
-                            ),
                             ),
                             ),
               
@@ -77,12 +73,10 @@ class AddForm extends StatelessWidget
             {
               if(inputMax.isEmpty || inputMin.isEmpty)
               {
-                print("1111");
                 Navigator.pop(context);
               }
               else
               {
-                 print("2222");
                 Navigator.pop(context,PressureClass(time,inputMax,inputMin)); 
               }
             }, icon: const Icon(Icons.check_circle,size: 50,)),),
