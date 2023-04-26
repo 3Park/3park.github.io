@@ -32,6 +32,9 @@ class AddForm extends StatelessWidget
     var inputMax = high;
     var inputMin = low;
 
+    TextEditingController controller1 = TextEditingController(text: high);
+    TextEditingController controller2 = TextEditingController(text: low);
+
     return Material(
       child:  Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -41,19 +44,26 @@ class AddForm extends StatelessWidget
         children: [
            
             SizedBox(width: widthValue * 30,
-                    child:  TextField(decoration: const InputDecoration(hintText: "정상 : 120 미만", labelText: "수축기(높은수치) : "),
+                    child:  GestureDetector(onTap: () => FocusScope.of(context).unfocus(),
+                            child:TextField(decoration: const InputDecoration(hintText: "정상 : 120 미만", labelText: "수축기(높은수치) : "),
                             onChanged: (text) => { inputMax = text},
                             keyboardType: TextInputType.number,
-                            controller: TextEditingController(text:high),
-                            ),),
+                            controller: controller1,
+                            ),
+                            ),
+                            ),
+           
             SizedBox(width: widthValue * 10,),
 
             SizedBox(width: widthValue * 30,
-                    child: TextField(decoration: const InputDecoration(hintText: "정상 : 80 미만", labelText: "이완기(낮은수치) : "),
+                    child: GestureDetector(onTap: () => FocusScope.of(context).unfocus(),
+                            child:TextField(decoration: const InputDecoration(hintText: "정상 : 80 미만", labelText: "이완기(낮은수치) : "),
                             onChanged: (text) => { inputMin = text},
                             keyboardType: TextInputType.number,
-                            controller: TextEditingController(text:low),
-                            ),),
+                            controller: controller2,
+                            ),
+                            ),
+                            ),
               
            
             
