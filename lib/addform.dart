@@ -8,7 +8,11 @@ class AddForm extends StatelessWidget
 
   PressureClass? historyItem;
 
-  AddForm({super.key,this.historyItem});
+  AddForm(
+    {super.key,this.historyItem});
+
+  TextEditingController controller1  = TextEditingController();
+  TextEditingController controller2 = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +22,6 @@ class AddForm extends StatelessWidget
     String high = "";
     String low = "";
 
-
     if(historyItem != null)
     {
       time = historyItem!.time;
@@ -26,14 +29,16 @@ class AddForm extends StatelessWidget
       low = historyItem!.low;      
     }
 
+    controller1.text = high;
+    controller2.text = low;
+
     var heightValue = MediaQuery.of(context).size.height / 100.0;
     var widthValue = MediaQuery.of(context).size.width / 100.0;
 
     var inputMax = high;
     var inputMin = low;
 
-    TextEditingController controller1 = TextEditingController(text: high);
-    TextEditingController controller2 = TextEditingController(text: low);
+    
 
     return Material(
       child:  Column(
@@ -44,20 +49,24 @@ class AddForm extends StatelessWidget
         children: [
            
             SizedBox(width: widthValue * 30,
-                    child:  TextField(decoration: const InputDecoration(hintText: "정상 : 120 미만", labelText: "수축기(높은수치) : "),
-                            onChanged: (text) => { inputMax = text},
+                    child:  GestureDetector(onTap: () => FocusScope.of(context).unfocus(),
+                            child:TextField(decoration: const InputDecoration(hintText: "정상 : 120 미만", labelText: "수축기(높은수치) : "),
+                            onSubmitted: (text) => { inputMax = text},
                             keyboardType: TextInputType.number,
                             controller: controller1,
+                            ),
                             ),
                             ),
            
             SizedBox(width: widthValue * 10,),
 
             SizedBox(width: widthValue * 30,
-                    child: TextField(decoration: const InputDecoration(hintText: "정상 : 80 미만", labelText: "이완기(낮은수치) : "),
-                            onChanged: (text) => { inputMin = text},
+                    child: GestureDetector(onTap: () => FocusScope.of(context).unfocus(),
+                            child:TextField(decoration: const InputDecoration(hintText: "정상 : 80 미만", labelText: "이완기(낮은수치) : "),
+                            onSubmitted: (text) => { inputMin = text},
                             keyboardType: TextInputType.number,
                             controller: controller2,
+                            ),
                             ),
                             ),
               
