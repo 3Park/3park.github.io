@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "34850021057",
+    "firebase_url": "https://bloodpressure-4828a-default-rtdb.firebaseio.com",
+    "project_id": "bloodpressure-4828a",
+    "storage_bucket": "bloodpressure-4828a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:34850021057:android:bb062d9fca230899157e40",
+        "android_client_info": {
+          "package_name": "com.example.bloodpressure"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "34850021057-2ri9ugdtv296fs4t3i1ctakpjdaehtsi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDd5GCwuG6Jae8G38ICpnHLWopPhx9xcS8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "34850021057-2ri9ugdtv296fs4t3i1ctakpjdaehtsi.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "34850021057-345cm7opgipgbo7b8o5okuh2eh88sq77.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.bloodpressure"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

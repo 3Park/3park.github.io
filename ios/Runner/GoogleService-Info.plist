@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>34850021057-345cm7opgipgbo7b8o5okuh2eh88sq77.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.34850021057-345cm7opgipgbo7b8o5okuh2eh88sq77</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCTnreyPXC2o96zvE0coBKTRQzMecNvz04</string>
+	<key>GCM_SENDER_ID</key>
+	<string>34850021057</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.bloodpressure</string>
+	<key>PROJECT_ID</key>
+	<string>bloodpressure-4828a</string>
+	<key>STORAGE_BUCKET</key>
+	<string>bloodpressure-4828a.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:34850021057:ios:1d7253615a7ccb2b157e40</string>
+	<key>DATABASE_URL</key>
+	<string>https://bloodpressure-4828a-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>

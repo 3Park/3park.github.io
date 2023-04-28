@@ -2,38 +2,68 @@
 
 import 'package:bloodpressure/addform.dart';
 import 'package:bloodpressure/pressureclass.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  final Future<FirebaseApp> _initialization = Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Blood Pressure',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Blood Pressure History'),
+
+    return FutureBuilder(
+      future: _initialization,
+      builder: (context, snapshot) {
+        if(snapshot.connectionState == ConnectionState.done)
+        {
+            return MaterialApp(
+                  title: 'Blood Pressure',
+                  theme: ThemeData(
+                    // This is the theme of your application.
+                    //
+                    // Try running your application with "flutter run". You'll see the
+                    // application has a blue toolbar. Then, without quitting the app, try
+                    // changing the primarySwatch below to Colors.green and then invoke
+                    // "hot reload" (press "r" in the console where you ran "flutter run",
+                    // or simply save your changes to "hot reload" in a Flutter IDE).
+                    // Notice that the counter didn't reset back to zero; the application
+                    // is not restarted.
+                    primarySwatch: Colors.blue,
+                  ),
+                  home: const MyHomePage(title: 'Blood Pressure History'),
+                );
+        }  
+         return MaterialApp(
+                  title: 'Blood Pressure',
+                  theme: ThemeData(
+                    // This is the theme of your application.
+                    //
+                    // Try running your application with "flutter run". You'll see the
+                    // application has a blue toolbar. Then, without quitting the app, try
+                    // changing the primarySwatch below to Colors.green and then invoke
+                    // "hot reload" (press "r" in the console where you ran "flutter run",
+                    // or simply save your changes to "hot reload" in a Flutter IDE).
+                    // Notice that the counter didn't reset back to zero; the application
+                    // is not restarted.
+                    primarySwatch: Colors.blue,
+                  ),
+                  home: const Text('Loading...'),
+                );
+      },
     );
+
   }
-
-
-
 }
 
 class MyHomePage extends StatefulWidget {
@@ -52,6 +82,7 @@ class MyHomePage extends StatefulWidget {
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
+  
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -69,8 +100,23 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     });
   }
+  
+  @override
+  void initState()
+  {
+    super.initState();
+      _testTemp();
+      
+  }
 
+  Future<void> _testTemp()
+  async {
+    CollectionReference temp = FirebaseFirestore.instance.collection('member');
+    var a = await temp.doc('4umFcKeIvP6ZvQvyT6Y0').get();
+    print(a.data());
+  }
 
+  
   List<Widget> getList()
   {
 
