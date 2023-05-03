@@ -105,15 +105,34 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState()
   {
     super.initState();
-      _testTemp();
+      _getDataFromCloudFireStore();
       
   }
 
-  Future<void> _testTemp()
+  Future<void> _getDataFromCloudFireStore()
   async {
-    CollectionReference temp = FirebaseFirestore.instance.collection('member');
-    var a = await temp.doc('4umFcKeIvP6ZvQvyT6Y0').get();
-    print(a.data());
+    CollectionReference collections = FirebaseFirestore.instance.collection('history');
+    
+    var histories = await collections.where("member",isEqualTo: "park").where("createtime",isNull: false).orderBy("createtime").get();
+
+    if(histories == null || histories.docs == null || histories.docs.length <= 0)
+      print("data null");
+    else
+    {
+      histories.docs.forEach((item) { 
+          
+          PressureClass temp = PressureClass(item["date"], item["high"], item["low"]);
+          setState(() {
+                  _listItems.add(temp);
+                });
+      }
+      );
+    }
+
+
+    // var a = await temp.doc('4umFcKeIvP6ZvQvyT6Y0').get();
+    // var b = a.data() as Map<String,dynamic>;    
+    // print(b["member"].toString());
   }
 
   
@@ -166,7 +185,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 }, 
                                 icon: const Icon(Icons.delete),),
                                 ],
-                                )
+                                ),
+                                SizedBox(height: (MediaQuery.of(context).size.height / 100) * 5,),
 
               ],),
                         
