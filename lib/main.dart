@@ -96,6 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       if(result != null)
       {
+        _addDataToFireStore(result);
         _listItems.add(result);
       }
     });
@@ -121,7 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
     {
       histories.docs.forEach((item) { 
           
-          PressureClass temp = PressureClass(item["date"], item["high"], item["low"]);
+          PressureClass temp = PressureClass(item["date"], item["high"], item["low"], item["createtime"]);
           setState(() {
                   _listItems.add(temp);
                 });
@@ -134,6 +135,19 @@ class _MyHomePageState extends State<MyHomePage> {
     // var b = a.data() as Map<String,dynamic>;    
     // print(b["member"].toString());
   }
+
+  void _addDataToFireStore(PressureClass item){
+
+    if(item == null)
+    {
+      return;
+    }
+
+    FirebaseFirestore.instance.collection('history').add({"createtime":item.createtime,"date":item.time,"high":item.high,"low":item.low,"member":"park"});
+    
+  }
+
+  
 
   
   List<Widget> getList()
