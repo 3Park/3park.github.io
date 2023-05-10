@@ -146,9 +146,31 @@ class _MyHomePageState extends State<MyHomePage> {
     FirebaseFirestore.instance.collection('history').add({"createtime":item.createtime,"date":item.time,"high":item.high,"low":item.low,"member":"park"});
     
   }
-
   
+  Future<void> _updateDeleteFireStoreData(PressureClass item, bool isModify)
+      async {
+    if(item == null)
+    {
+      return;
+    }
 
+    CollectionReference collections = FirebaseFirestore.instance.collection('history');
+    
+    var histories = await collections.where("member",isEqualTo: "park").where("createtime",isEqualTo: item.createtime).get();
+    if(histories == null || histories.docs == null || histories.docs.length <= 0)
+    {
+      return;
+    }
+
+    if(isModify)
+    {
+        collections.doc(histories.docs.first.id).update({"high":item.high, "low" : item.low});
+    }
+    else
+    {
+        collections.doc(histories.docs.first.id).delete();
+    }
+  }
   
   List<Widget> getList()
   {
@@ -187,6 +209,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                     setState(() {
                                          item.high = resultItem!.high;
                                           item.low = resultItem!.low;
+
+                                          _updateDeleteFireStoreData(item, true);
                                     })
                                    }
                                   }, 
@@ -195,6 +219,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 {                                 
                                   setState(() {
                                       _listItems.remove(item);
+
+                                      _updateDeleteFireStoreData(item, false);
                                     })
                                 }, 
                                 icon: const Icon(Icons.delete),),

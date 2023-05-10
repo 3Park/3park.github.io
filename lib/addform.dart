@@ -28,6 +28,7 @@ class _AddFromState extends State<AddForm>
 
     DateTime now = DateTime.now();
     String time = "${now.year.toString()}년${now.month.toString()}월${now.day}일 ${now.hour.toString()}:${now.minute.toString()}분";
+    String createTime = "${now.year.toString()}${now.month.toString()}${now.day}${now.hour.toString()}${now.minute.toString()}";
     String high = "";
     String low = "";
 
@@ -35,7 +36,8 @@ class _AddFromState extends State<AddForm>
     {
       time = widget.historyItem!.time;
       high = widget.historyItem!.high;
-      low = widget.historyItem!.low;      
+      low = widget.historyItem!.low;  
+      createTime = widget.historyItem!.createtime;
     }
 
     var heightValue = MediaQuery.of(context).size.height / 100.0;
@@ -101,7 +103,7 @@ class _AddFromState extends State<AddForm>
               }
               else
               {
-                Navigator.pop(context,PressureClass(time,widget.inputMax,widget.inputMin)); 
+                Navigator.pop(context,PressureClass(time,widget.inputMax,widget.inputMin,createTime)); 
               }
             }, icon: const Icon(Icons.check_circle,size: 50,)),),
             SizedBox(width: 100,height: 100, child: IconButton(onPressed: () {Navigator.pop(context);}, icon: const Icon(Icons.cancel,size: 50,)),),
