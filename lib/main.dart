@@ -109,7 +109,6 @@ class _MyHomePageState extends State<MyHomePage> {
   {
     super.initState();
       _getDataFromCloudFireStore();
-      print("tttttt");
   }
 
   Future<void> _getDataFromCloudFireStore()
@@ -243,7 +242,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Column(mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(height: (MediaQuery.of(context).size.height / 100) * 10,),
-              const Text("Empty"),
+              const Text("Empty 11"),
           ],)
           );
     }      
