@@ -1,5 +1,3 @@
-
-
 import 'dart:html';
 
 import 'package:bloodpressure/addform.dart';
@@ -7,6 +5,7 @@ import 'package:bloodpressure/pressureclass.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'findform.dart';
 import 'firebase_options.dart';
 
 void main() {
@@ -17,59 +16,56 @@ void main() {
 class MyApp extends StatelessWidget {
   MyApp({super.key});
 
-  final Future<FirebaseApp> _initialization = Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
+  final Future<FirebaseApp> _initialization =
+      Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-
     return FutureBuilder(
       future: _initialization,
       builder: (context, snapshot) {
-        if(snapshot.connectionState == ConnectionState.done)
-        {
-            return MaterialApp(
-                  title: 'Blood Pressure',
-                  theme: ThemeData(
-                    // This is the theme of your application.
-                    //
-                    // Try running your application with "flutter run". You'll see the
-                    // application has a blue toolbar. Then, without quitting the app, try
-                    // changing the primarySwatch below to Colors.green and then invoke
-                    // "hot reload" (press "r" in the console where you ran "flutter run",
-                    // or simply save your changes to "hot reload" in a Flutter IDE).
-                    // Notice that the counter didn't reset back to zero; the application
-                    // is not restarted.
-                    primarySwatch: Colors.blue,
-                  ),
-                  home: const MyHomePage(title: 'Blood Pressure History'),
-                );
-        }  
-         return MaterialApp(
-                  title: 'Blood Pressure',
-                  theme: ThemeData(
-                    // This is the theme of your application.
-                    //
-                    // Try running your application with "flutter run". You'll see the
-                    // application has a blue toolbar. Then, without quitting the app, try
-                    // changing the primarySwatch below to Colors.green and then invoke
-                    // "hot reload" (press "r" in the console where you ran "flutter run",
-                    // or simply save your changes to "hot reload" in a Flutter IDE).
-                    // Notice that the counter didn't reset back to zero; the application
-                    // is not restarted.
-                    primarySwatch: Colors.blue,
-                  ),
-                  home: const Text('Loading...'),
-                );
+        if (snapshot.connectionState == ConnectionState.done) {
+          return MaterialApp(
+            title: 'Blood Pressure',
+            theme: ThemeData(
+              // This is the theme of your application.
+              //
+              // Try running your application with "flutter run". You'll see the
+              // application has a blue toolbar. Then, without quitting the app, try
+              // changing the primarySwatch below to Colors.green and then invoke
+              // "hot reload" (press "r" in the console where you ran "flutter run",
+              // or simply save your changes to "hot reload" in a Flutter IDE).
+              // Notice that the counter didn't reset back to zero; the application
+              // is not restarted.
+              primarySwatch: Colors.blue,
+            ),
+            home: MyHomePage(title: 'Blood Pressure History'),
+          );
+        }
+        return MaterialApp(
+          title: 'Blood Pressure',
+          theme: ThemeData(
+            // This is the theme of your application.
+            //
+            // Try running your application with "flutter run". You'll see the
+            // application has a blue toolbar. Then, without quitting the app, try
+            // changing the primarySwatch below to Colors.green and then invoke
+            // "hot reload" (press "r" in the console where you ran "flutter run",
+            // or simply save your changes to "hot reload" in a Flutter IDE).
+            // Notice that the counter didn't reset back to zero; the application
+            // is not restarted.
+            primarySwatch: Colors.blue,
+          ),
+          home: const Text('Loading...'),
+        );
       },
     );
-
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  MyHomePage({super.key, required this.title});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -82,174 +78,241 @@ class MyHomePage extends StatefulWidget {
 
   final String title;
 
+  bool isHighChecked = false;
+  bool isLowChecked = false;
+
   @override
   State<MyHomePage> createState() => _MyHomePageState();
-  
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   final List<PressureClass> _listItems = List.empty(growable: true);
 
   Future<void> _callAddForm() async {
-    
-    final result = await Navigator.push(context, MaterialPageRoute(builder: (context) => AddForm()));
+    final result = await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => AddForm()));
 
     setState(() {
-      if(result != null)
-      {
+      if (result != null) {
         _addDataToFireStore(result);
         _listItems.add(result);
       }
     });
   }
-  
+
   @override
-  void initState()
-  {
+  void initState() {
     super.initState();
-      _getDataFromCloudFireStore();
+    _getDataFromCloudFireStore();
   }
 
-  Future<void> _getDataFromCloudFireStore()
-  async {
-    CollectionReference collections = FirebaseFirestore.instance.collection('history');
-    
-    var histories = await collections.where("member",isEqualTo: "park").where("createtime",isNull: false).orderBy("createtime").get();
+  Future<void> _getDataFromCloudFireStore() async {
+    CollectionReference collections =
+        FirebaseFirestore.instance.collection('history');
 
-    if(histories == null || histories.docs == null || histories.docs.length <= 0)
+    var histories = await collections
+        .where("member", isEqualTo: "park")
+        .where("createtime", isNull: false)
+        .orderBy("createtime")
+        .get();
+
+    if (histories == null ||
+        histories.docs == null ||
+        histories.docs.length <= 0)
       print("data null");
-    else
-    {
-      histories.docs.forEach((item) { 
-          
-          PressureClass temp = PressureClass(item["date"], item["high"], item["low"], item["createtime"]);
-          setState(() {
-                  _listItems.add(temp);
-                });
-      }
-      );
+    else {
+      histories.docs.forEach((item) {
+        PressureClass temp = PressureClass(
+            item["date"], item["high"], item["low"], item["createtime"]);
+        setState(() {
+          _listItems.add(temp);
+        });
+      });
     }
 
-
     // var a = await temp.doc('4umFcKeIvP6ZvQvyT6Y0').get();
-    // var b = a.data() as Map<String,dynamic>;    
+    // var b = a.data() as Map<String,dynamic>;
     // print(b["member"].toString());
   }
 
-  void _addDataToFireStore(PressureClass item){
+  Future<void> _getDataFromCloudFireStoreWithFind(bool isHighChecked, bool isLowChecked) async {
+   
+   _listItems.clear();
 
-    if(item == null)
-    {
-      return;
+    CollectionReference collections =
+        FirebaseFirestore.instance.collection('history');
+
+    var histories = await collections
+        .where("member", isEqualTo: "park")
+        .where("createtime", isNull: false)
+        .orderBy("createtime")
+        .get();
+
+    if (histories == null ||
+        histories.docs == null ||
+        histories.docs.length <= 0)
+      print("data null");
+    else {
+
+      for (var item in histories.docs)
+      {
+        if(isHighChecked && isLowChecked && (item["high"] < 135 || item["low"] < 85))
+        {
+            continue;
+        }
+        else if(isHighChecked == false && isLowChecked && item["low"] < 85)
+        {
+            continue;
+        }
+        else if (isHighChecked && isLowChecked == false && item["high"] < 135)
+        {
+            continue;
+        }
+
+        PressureClass temp = PressureClass(
+            item["date"], item["high"], item["low"], item["createtime"]);
+        setState(() {
+          _listItems.add(temp);
+        });
+      }
     }
-
-    FirebaseFirestore.instance.collection('history').add({"createtime":item.createtime,"date":item.time,"high":item.high,"low":item.low,"member":"park"});
     
   }
-  
-  Future<void> _updateDeleteFireStoreData(PressureClass item, bool isModify)
-      async {
-    if(item == null)
-    {
+
+  void _addDataToFireStore(PressureClass item) {
+    if (item == null) {
       return;
     }
 
-    CollectionReference collections = FirebaseFirestore.instance.collection('history');
-    
-    var histories = await collections.where("member",isEqualTo: "park").where("createtime",isEqualTo: item.createtime).get();
-    if(histories == null || histories.docs == null || histories.docs.length <= 0)
-    {
+    FirebaseFirestore.instance.collection('history').add({
+      "createtime": item.createtime,
+      "date": item.time,
+      "high": item.high,
+      "low": item.low,
+      "member": "park"
+    });
+  }
+
+  Future<void> _updateDeleteFireStoreData(
+      PressureClass item, bool isModify) async {
+    if (item == null) {
       return;
     }
 
-    if(isModify)
-    {
-        collections.doc(histories.docs.first.id).update({"high":item.high, "low" : item.low});
+    CollectionReference collections =
+        FirebaseFirestore.instance.collection('history');
+
+    var histories = await collections
+        .where("member", isEqualTo: "park")
+        .where("createtime", isEqualTo: item.createtime)
+        .get();
+    if (histories == null ||
+        histories.docs == null ||
+        histories.docs.length <= 0) {
+      return;
     }
-    else
-    {
-        collections.doc(histories.docs.first.id).delete();
+
+    if (isModify) {
+      collections
+          .doc(histories.docs.first.id)
+          .update({"high": item.high, "low": item.low});
+    } else {
+      collections.doc(histories.docs.first.id).delete();
     }
   }
-  
-  List<Widget> getList()
-  {
 
+  List<Widget> getList() {
     List<Widget> items = List.empty(growable: true);
     PressureClass? resultItem = null;
 
-    if(_listItems.isNotEmpty)
-    {
-          var width = MediaQuery.of(context).size.width / 100.0;
-         _listItems.forEach((item) {
-            items.add(
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+    if (_listItems.isNotEmpty) {
+      var width = MediaQuery.of(context).size.width / 100.0;
+      _listItems.forEach((item) {
+        items.add(
+          Container(
+            decoration: BoxDecoration(
+              border:
+                  Border.all(color: Colors.black12, style: BorderStyle.solid),
+            ),
+            margin: const EdgeInsets.only(bottom: 10.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
                 Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                                const Icon(Icons.timelapse),
-                                SizedBox(width: width * 0.5,),
-                                Text("일시 : ${item.time}"),
-                ],),
-                                
-                                Row(mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                                
-                                SizedBox(width: width * 4,),
-                                FittedBox(child: Text("수축기(높은값) : ${item.high}"),),
-                                SizedBox(width: width * 4,),
-                                FittedBox(child: Text("이완기(낮은값) : ${item.low}"),),                                
-                                IconButton(onPressed: () async => 
-                                {  
-                                   resultItem = await Navigator.push(context, MaterialPageRoute(builder: (context) => AddForm(historyItem:item))), 
-                                   if(resultItem != null)
-                                   {
-                                    setState(() {
-                                         item.high = resultItem!.high;
-                                          item.low = resultItem!.low;
+                    const Icon(Icons.timelapse),
+                    SizedBox(
+                      width: width * 0.5,
+                    ),
+                    Text("일시 : ${item.time}"),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: width * 4,
+                    ),
+                    FittedBox(
+                      child: Text("수축기(높은값) : ${item.high}"),
+                    ),
+                    SizedBox(
+                      width: width * 4,
+                    ),
+                    FittedBox(
+                      child: Text("이완기(낮은값) : ${item.low}"),
+                    ),
+                    IconButton(
+                      onPressed: () async => {
+                        resultItem = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    AddForm(historyItem: item))),
+                        if (resultItem != null)
+                          {
+                            setState(() {
+                              item.high = resultItem!.high;
+                              item.low = resultItem!.low;
 
-                                          _updateDeleteFireStoreData(item, true);
-                                    })
-                                   }
-                                  }, 
-                                icon: const Icon(Icons.edit),),
-                                IconButton(onPressed: () => 
-                                {                                 
-                                  setState(() {
-                                      _listItems.remove(item);
+                              _updateDeleteFireStoreData(item, true);
+                            })
+                          }
+                      },
+                      icon: const Icon(Icons.edit),
+                    ),
+                    IconButton(
+                      onPressed: () => {
+                        setState(() {
+                          _listItems.remove(item);
 
-                                      _updateDeleteFireStoreData(item, false);
-                                    })
-                                }, 
-                                icon: const Icon(Icons.delete),),
-                                ],
-                                ),
-                                SizedBox(height: (MediaQuery.of(context).size.height / 100) * 5,),
-
-              ],),
-                        
-                                    
-                        );
-                
-          });
+                          _updateDeleteFireStoreData(item, false);
+                        })
+                      },
+                      icon: const Icon(Icons.delete),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      });
+    } else {
+      items.add(Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: (MediaQuery.of(context).size.height / 100) * 10,
+          ),
+          const Text("Empty 11"),
+        ],
+      ));
     }
-    else
-    {
-         items.add(
-          Column(mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(height: (MediaQuery.of(context).size.height / 100) * 10,),
-              const Text("Empty 11"),
-          ],)
-          );
-    }      
 
     return items;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -267,20 +330,74 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: SafeArea(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: 
-        SizedBox(
-          width: (MediaQuery.of(context).size.width / 100 * 90),
-          height: (MediaQuery.of(context).size.height / 100 * 90),
-          child: 
-            ListView(
-              children: 
-                getList(),
+          // Center is a layout widget. It takes a single child and positions it
+          // in the middle of the parent.
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text("검색 조건 설정"),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [              
+              Container(
+                alignment: Alignment.topCenter,
+                padding: const EdgeInsets.only(bottom: 10.0, top: 20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('135 이상 '),
+                    Checkbox(
+                      value: widget.isHighChecked,
+                      onChanged: (selected) {
+                        setState(() {
+                          if (selected == null) {
+                            widget.isHighChecked = false;
+                          } else {
+                            widget.isHighChecked = selected;
+                          }
+                        });
+                      },
+                    ),
+                    const SizedBox(
+                      width: 20.0,
+                    ),
+                    const Text('85 이상 '),
+                    Checkbox(
+                        value: widget.isLowChecked,
+                        onChanged: (selected) {
+                          setState(() {
+                            if (selected == null) {
+                              widget.isLowChecked = false;
+                            } else {
+                              widget.isLowChecked = selected;
+                            }
+                          });
+                        }),
+                      IconButton(
+                        onPressed: () => {
+                          setState(() {
+                                  _getDataFromCloudFireStoreWithFind(widget.isHighChecked, widget.isLowChecked);
+                                  })
+                        },
+                        icon: const Icon(Icons.search),
+                      ),
+                  ],
                 ),
-              ),
-        
-      ),
+              ),              
+            ],
+          ),
+          SizedBox(
+            height: (MediaQuery.of(context).size.width / 100) * 5,
+          ),
+          SizedBox(
+            width: (MediaQuery.of(context).size.width / 100) * 90,
+            height: (MediaQuery.of(context).size.height / 100) * 70,
+            child: ListView(
+              children: getList(),
+            ),
+          ),
+        ],
+      )),
       floatingActionButton: FloatingActionButton(
         onPressed: _callAddForm,
         tooltip: 'Add History',

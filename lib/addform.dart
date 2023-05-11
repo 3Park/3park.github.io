@@ -7,8 +7,8 @@ class AddForm extends StatefulWidget
 {
 
   PressureClass? historyItem;
-  var inputMax = "";
-  var inputMin = "";
+  int inputMax = 0;
+  int inputMin = 0;
 
   AddForm(
     {super.key,this.historyItem});
@@ -29,8 +29,8 @@ class _AddFromState extends State<AddForm>
     DateTime now = DateTime.now();
     String time = "${now.year.toString()}년${now.month.toString()}월${now.day}일 ${now.hour.toString()}:${now.minute.toString()}분";
     String createTime = "${now.year.toString()}${now.month.toString()}${now.day}${now.hour.toString()}${now.minute.toString()}";
-    String high = "";
-    String low = "";
+    int high = 0;
+    int low = 0;
 
     if(widget.historyItem != null)
     {
@@ -43,18 +43,18 @@ class _AddFromState extends State<AddForm>
     var heightValue = MediaQuery.of(context).size.height / 100.0;
     var widthValue = MediaQuery.of(context).size.width / 100.0;
 
-    if(widget.inputMax.isEmpty)
+    if(widget.inputMax <= 0)
     {
         widget.inputMax = high;     
     }
       
-    if(widget.inputMin.isEmpty)
+    if(widget.inputMin <= 0)
     {
         widget.inputMin = low;     
     }
 
-    widget.controller1.text =  widget.inputMax;
-    widget.controller2.text = widget.inputMin;
+    widget.controller1.text =  widget.inputMax.toString();
+    widget.controller2.text = widget.inputMin.toString();
 
 
     return Material(
@@ -68,7 +68,7 @@ class _AddFromState extends State<AddForm>
             SizedBox(width: widthValue * 30,
                     child:  GestureDetector(onTap: () => FocusScope.of(context).unfocus(),
                             child:TextField(decoration: const InputDecoration(hintText: "정상 : 120 미만", labelText: "수축기(높은수치) : "),
-                            onChanged: (text) => { widget.inputMax = text},
+                            onChanged: (text) => { widget.inputMax = int.parse(text)},
                             keyboardType: TextInputType.number,
                             controller: widget.controller1,
                             ),
@@ -80,7 +80,7 @@ class _AddFromState extends State<AddForm>
             SizedBox(width: widthValue * 30,
                     child: GestureDetector(onTap: () => FocusScope.of(context).unfocus(),
                             child:TextField(decoration: const InputDecoration(hintText: "정상 : 80 미만", labelText: "이완기(낮은수치) : "),
-                            onChanged: (text) => { widget.inputMin = text},
+                            onChanged: (text) => { widget.inputMin = int.parse(text)},
                             keyboardType: TextInputType.number,
                             controller: widget.controller2,
                             ),
@@ -97,7 +97,7 @@ class _AddFromState extends State<AddForm>
           children: [
             SizedBox(width: 100,height: 100, child: IconButton(onPressed: () 
             {
-              if(widget.inputMax.isEmpty || widget.inputMin.isEmpty)
+              if(widget.inputMax <= 0 || widget.inputMin <= 0)
               {
                 Navigator.pop(context);
               }
