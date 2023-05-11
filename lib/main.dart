@@ -80,6 +80,8 @@ class MyHomePage extends StatefulWidget {
 
   bool isHighChecked = false;
   bool isLowChecked = false;
+  int correction = 0;
+  TextEditingController controller1  = TextEditingController();
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -135,7 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // print(b["member"].toString());
   }
 
-  Future<void> _getDataFromCloudFireStoreWithFind(bool isHighChecked, bool isLowChecked) async {
+  Future<void> _getDataFromCloudFireStoreWithFind(bool isHighChecked, bool isLowChecked, int correction) async {
    
    _listItems.clear();
 
@@ -156,15 +158,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
       for (var item in histories.docs)
       {
-        if(isHighChecked && isLowChecked && (item["high"] < 135 || item["low"] < 85))
+        if(isHighChecked && isLowChecked && (item["high"] < 135 - correction || item["low"] < 85 -  correction))
         {
             continue;
         }
-        else if(isHighChecked == false && isLowChecked && item["low"] < 85)
+        else if(isHighChecked == false && isLowChecked && item["low"] < 85 - correction)
         {
             continue;
         }
-        else if (isHighChecked && isLowChecked == false && item["high"] < 135)
+        else if (isHighChecked && isLowChecked == false && item["high"] < 135 - correction)
         {
             continue;
         }
@@ -323,6 +325,8 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
 
+    widget.controller1.text = widget.correction.toString(); 
+
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
@@ -373,10 +377,17 @@ class _MyHomePageState extends State<MyHomePage> {
                             }
                           });
                         }),
+                        GestureDetector(onTap: () => FocusScope.of(context).unfocus(),
+                            child:TextField(decoration: const InputDecoration(hintText: "", labelText: "오차값 : "),
+                            onChanged: (text) => { widget.correction = int.parse(text)},
+                            keyboardType: TextInputType.number,
+                            controller: widget.controller1,
+                            ),
+                            ),
                       IconButton(
                         onPressed: () => {
                           setState(() {
-                                  _getDataFromCloudFireStoreWithFind(widget.isHighChecked, widget.isLowChecked);
+                                  _getDataFromCloudFireStoreWithFind(widget.isHighChecked, widget.isLowChecked, widget.correction);
                                   })
                         },
                         icon: const Icon(Icons.search),
