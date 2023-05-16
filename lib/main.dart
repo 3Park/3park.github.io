@@ -1,11 +1,12 @@
-import 'dart:html';
+
+
 
 import 'package:bloodpressure/addform.dart';
 import 'package:bloodpressure/pressureclass.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'findform.dart';
+
 import 'firebase_options.dart';
 
 void main() {
@@ -82,6 +83,7 @@ class MyHomePage extends StatefulWidget {
   bool isLowChecked = false;
   int correction = 0;
   TextEditingController controller1  = TextEditingController();
+  ScrollController scrollController = ScrollController();
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -90,6 +92,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final List<PressureClass> _listItems = List.empty(growable: true);
 
+    String totalText = "";
+  String highText = "";
+  String lowText = "";
+  
   Future<void> _callAddForm() async {
     final result = await Navigator.push(
         context, MaterialPageRoute(builder: (context) => AddForm()));
@@ -132,6 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     }
 
+    _calcDataInformation();
     // var a = await temp.doc('4umFcKeIvP6ZvQvyT6Y0').get();
     // var b = a.data() as Map<String,dynamic>;
     // print(b["member"].toString());
@@ -158,7 +165,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
       for (var item in histories.docs)
       {
-        if(isHighChecked && isLowChecked && (item["high"] < 135 - correction || item["low"] < 85 -  correction))
+        if(isHighChecked && isLowChecked && (item["high"] < 135 - correction && item["low"] < 85 -  correction))
         {
             continue;
         }
@@ -174,11 +181,74 @@ class _MyHomePageState extends State<MyHomePage> {
         PressureClass temp = PressureClass(
             item["date"], item["high"], item["low"], item["createtime"]);
         setState(() {
-          _listItems.add(temp);
+          _listItems.insert(0,temp);
         });
       }
     }
+
+    _calcDataInformation();
     
+  }
+
+  void _calcDataInformation()
+  {
+      if(_listItems == null || _listItems.isEmpty)
+      {
+        setState(() {
+          totalText = "";
+          highText = "";
+          lowText = "";
+        });
+      }
+      else
+      {
+        int totalcnt = _listItems.length;
+        int sumhigh = 0;
+        int sumlow = 0;
+
+        String avrHigh = "";
+        String avrLow = "";
+
+        int lowestHigh = _listItems.first.high;
+        int highestHigh = _listItems.first.high;
+        int lowestLow = _listItems.first.low;
+        int highestLow = _listItems.first.low;        
+
+        for (var item in _listItems)
+        {
+            sumhigh = sumhigh + item.high;
+            sumlow = sumlow + item.low;
+
+            if(lowestHigh > item.high)
+            {
+              lowestHigh = item.high;
+            }
+
+            if(highestHigh < item.high)
+            {
+              highestHigh = item.high;
+            }
+
+            if(lowestLow > item.low)
+            {
+              lowestLow = item.low;
+            }
+
+            if(highestLow < item.low)
+            {
+              highestLow = item.low;
+            }
+        }
+
+        avrHigh = (sumhigh / totalcnt).toStringAsFixed(1);
+        avrLow = (sumlow / totalcnt).toStringAsFixed(1);
+
+        setState(() {
+          totalText = "전체 총 개수 : $totalcnt";
+          highText = "수축기 최고 : $highestHigh,  최저 : $lowestHigh  , 평균 : $avrHigh";
+          lowText = "이완기 최고 : $highestLow,  최저 : $lowestLow  , 평균 : $avrLow";
+        });
+      }
   }
 
   void _addDataToFireStore(PressureClass item) {
@@ -193,6 +263,8 @@ class _MyHomePageState extends State<MyHomePage> {
       "low": item.low,
       "member": "park"
     });
+
+    _calcDataInformation();
   }
 
   Future<void> _updateDeleteFireStoreData(
@@ -221,6 +293,8 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       collections.doc(histories.docs.first.id).delete();
     }
+
+    _calcDataInformation();
   }
 
   List<Widget> getList() {
@@ -230,7 +304,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (_listItems.isNotEmpty) {
       var width = MediaQuery.of(context).size.width / 100.0;
       _listItems.forEach((item) {
-        items.add(
+        items.insert(0,
           Container(
             decoration: BoxDecoration(
               border:
@@ -300,7 +374,8 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         );
-      });
+      }); 
+
     } else {
       items.add(Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -308,10 +383,12 @@ class _MyHomePageState extends State<MyHomePage> {
           SizedBox(
             height: (MediaQuery.of(context).size.height / 100) * 10,
           ),
-          const Text("Empty 11"),
+          const Text("Empty"),
         ],
       ));
     }
+
+    _calcDataInformation();
 
     return items;
   }
@@ -377,13 +454,18 @@ class _MyHomePageState extends State<MyHomePage> {
                             }
                           });
                         }),
-                        GestureDetector(onTap: () => FocusScope.of(context).unfocus(),
+                        const SizedBox(width: 30,),
+                        SizedBox(width: 60,
+                        child: GestureDetector(onTap: () => FocusScope.of(context).unfocus(),
                             child:TextField(decoration: const InputDecoration(hintText: "", labelText: "오차값 : "),
                             onChanged: (text) => { widget.correction = int.parse(text)},
                             keyboardType: TextInputType.number,
                             controller: widget.controller1,
                             ),
+                            )
+                            ,
                             ),
+                        
                       IconButton(
                         onPressed: () => {
                           setState(() {
@@ -392,18 +474,41 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                         icon: const Icon(Icons.search),
                       ),
+                     
                   ],
                 ),
               ),              
             ],
           ),
+          Text(totalText),
+            Text(highText),
+            Text(lowText),
+          // SizedBox(width: 150,
+          // child: Container(alignment: Alignment.center,
+          //             decoration: BoxDecoration(
+          //               border:
+          //                   Border.all(color: Colors.black12, style: BorderStyle.solid),
+          //             ),
+          //             child: Row(children: [
+          //                 const Text("분석 정보 확인"),
+          //                    IconButton(icon: const Icon(Icons.edit_document),
+          //               onPressed: () => {
+
+          //               },
+          //               ),
+          //               ],
+          //                ),
+          //             ),),
+           
           SizedBox(
-            height: (MediaQuery.of(context).size.width / 100) * 5,
+            height: (MediaQuery.of(context).size.width / 100) * 2,
           ),
           SizedBox(
             width: (MediaQuery.of(context).size.width / 100) * 90,
-            height: (MediaQuery.of(context).size.height / 100) * 70,
+            height: (MediaQuery.of(context).size.height / 100) * 50,
             child: ListView(
+              reverse: true,
+              controller: widget.scrollController,
               children: getList(),
             ),
           ),

@@ -53,8 +53,24 @@ class _AddFromState extends State<AddForm>
         widget.inputMin = low;     
     }
 
-    widget.controller1.text =  widget.inputMax.toString();
-    widget.controller2.text = widget.inputMin.toString();
+    //처음 입력시 입력칸을 공란으로 두기위한 설정
+    if(widget.inputMax <= 0)
+    {
+        widget.controller1.text = "";
+    }
+    else
+    {
+        widget.controller1.text =  widget.inputMax.toString();
+    }
+
+    if(widget.inputMin <= 0)
+    {
+        widget.controller2.text = "";
+    }
+    else
+    {
+        widget.controller2.text = widget.inputMin.toString();
+    }
 
 
     return Material(
@@ -68,7 +84,17 @@ class _AddFromState extends State<AddForm>
             SizedBox(width: widthValue * 30,
                     child:  GestureDetector(onTap: () => FocusScope.of(context).unfocus(),
                             child:TextField(decoration: const InputDecoration(hintText: "정상 : 120 미만", labelText: "수축기(높은수치) : "),
-                            onChanged: (text) => { widget.inputMax = int.parse(text)},
+                            onChanged: (text) => 
+                            { 
+                              if(text.isEmpty)
+                              {
+                                widget.inputMax = 0
+                              }
+                              else
+                              {
+                                widget.inputMax = int.parse(text)
+                              }
+                            },
                             keyboardType: TextInputType.number,
                             controller: widget.controller1,
                             ),
@@ -80,7 +106,16 @@ class _AddFromState extends State<AddForm>
             SizedBox(width: widthValue * 30,
                     child: GestureDetector(onTap: () => FocusScope.of(context).unfocus(),
                             child:TextField(decoration: const InputDecoration(hintText: "정상 : 80 미만", labelText: "이완기(낮은수치) : "),
-                            onChanged: (text) => { widget.inputMin = int.parse(text)},
+                            onChanged: (text) => { 
+                              if(text.isEmpty)
+                              {
+                                widget.inputMin = 0
+                              }
+                              else
+                              {
+                                widget.inputMin = int.parse(text)
+                              }
+                            },
                             keyboardType: TextInputType.number,
                             controller: widget.controller2,
                             ),
