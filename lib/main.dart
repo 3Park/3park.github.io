@@ -414,7 +414,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // Center is a layout widget. It takes a single child and positions it
           // in the middle of the parent.
           child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           const Text("검색 조건 설정"),
           Row(
@@ -505,7 +505,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           SizedBox(
             width: (MediaQuery.of(context).size.width / 100) * 90,
-            height: (MediaQuery.of(context).size.height / 100) * 50,
+            height: (MediaQuery.of(context).size.height / 100) * 65,
             child: ListView(
               reverse: true,
               controller: widget.scrollController,
