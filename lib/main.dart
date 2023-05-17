@@ -93,6 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String totalText = "";
   String highText = "";
   String lowText = "";
+  String overNormalText = "";
 
   Future<void> _callAddForm() async {
     final result = await Navigator.push(
@@ -199,6 +200,9 @@ class _MyHomePageState extends State<MyHomePage> {
       int sumhigh = 0;
       int sumlow = 0;
 
+      int overNormalHigh = 0;
+      int overNormalLow = 0;
+
       String avrHigh = "";
       String avrLow = "";
 
@@ -226,6 +230,16 @@ class _MyHomePageState extends State<MyHomePage> {
         if (highestLow < item.low) {
           highestLow = item.low;
         }
+
+        if(item.high >= 120)
+        {
+          overNormalHigh++;
+        }
+
+        if(item.low >= 80)
+        {
+          overNormalLow++;
+        }
       }
 
       avrHigh = (sumhigh / totalcnt).toStringAsFixed(1);
@@ -235,6 +249,7 @@ class _MyHomePageState extends State<MyHomePage> {
         totalText = "전체 총 개수 : $totalcnt";
         highText = "수축기 최고 : $highestHigh,  최저 : $lowestHigh  , 평균 : $avrHigh";
         lowText = "이완기 최고 : $highestLow,  최저 : $lowestLow  , 평균 : $avrLow";
+        overNormalText = "수축기 120 이상 : $overNormalHigh 건, 이완기 80이상 : $overNormalLow 건";
       });
     }
   }
@@ -478,6 +493,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Text(totalText),
           Text(highText),
           Text(lowText),
+          Text(overNormalText),
           const SizedBox(
             height: 20,
           ),
@@ -516,7 +532,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           SizedBox(
             width: (MediaQuery.of(context).size.width / 100) * 90,
-            height: (MediaQuery.of(context).size.height / 100) * 55,
+            height: (MediaQuery.of(context).size.height / 100) * 50,
             child: ListView(
               reverse: true,
               controller: widget.scrollController,
