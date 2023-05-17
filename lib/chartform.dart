@@ -84,11 +84,12 @@ class ChartFormState extends State<ChartForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
+    return SingleChildScrollView(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          
           _getChartWidget(ChartType.LINE),
           _getChartWidget(ChartType.SCATTER),
           Padding(
