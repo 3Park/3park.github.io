@@ -52,12 +52,15 @@ class ChartFormState extends State<ChartForm> {
   Widget _getChartWidget(ChartType chartType) {
     var seriesItem;
 
+    String chartName = "Line 차트";
+
     switch (chartType) {
       case ChartType.LINE:
         seriesItem = _getLineSeries(widget.originList);
         break;
       case ChartType.SCATTER:
         seriesItem = _getScatterSeries(widget.originList);
+        chartName = "분포도 차트";
         break;
       default:
     }
@@ -65,7 +68,7 @@ class ChartFormState extends State<ChartForm> {
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: SfCartesianChart(
-        title: ChartTitle(text: "차트"),
+        title: ChartTitle(text: chartName),
         legend: Legend(isVisible: true),
         primaryXAxis: CategoryAxis(
             majorGridLines: const MajorGridLines(width: 0), labelRotation: -45),
