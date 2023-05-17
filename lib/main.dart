@@ -1,7 +1,5 @@
-
-
-
 import 'package:bloodpressure/addform.dart';
+import 'package:bloodpressure/chartform.dart';
 import 'package:bloodpressure/pressureclass.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -82,7 +80,7 @@ class MyHomePage extends StatefulWidget {
   bool isHighChecked = false;
   bool isLowChecked = false;
   int correction = 0;
-  TextEditingController controller1  = TextEditingController();
+  TextEditingController controller1 = TextEditingController();
   ScrollController scrollController = ScrollController();
 
   @override
@@ -90,12 +88,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<PressureClass> _listItems = List.empty(growable: true);
+  List<PressureClass> _listItems = List.empty(growable: true);
 
-    String totalText = "";
+  String totalText = "";
   String highText = "";
   String lowText = "";
-  
+
   Future<void> _callAddForm() async {
     final result = await Navigator.push(
         context, MaterialPageRoute(builder: (context) => AddForm()));
@@ -144,9 +142,9 @@ class _MyHomePageState extends State<MyHomePage> {
     // print(b["member"].toString());
   }
 
-  Future<void> _getDataFromCloudFireStoreWithFind(bool isHighChecked, bool isLowChecked, int correction) async {
-   
-   _listItems.clear();
+  Future<void> _getDataFromCloudFireStoreWithFind(
+      bool isHighChecked, bool isLowChecked, int correction) async {
+    _listItems.clear();
 
     CollectionReference collections =
         FirebaseFirestore.instance.collection('history');
@@ -162,93 +160,83 @@ class _MyHomePageState extends State<MyHomePage> {
         histories.docs.length <= 0)
       print("data null");
     else {
-
-      for (var item in histories.docs)
-      {
-        if(isHighChecked && isLowChecked && (item["high"] < 135 - correction && item["low"] < 85 -  correction))
-        {
-            continue;
-        }
-        else if(isHighChecked == false && isLowChecked && item["low"] < 85 - correction)
-        {
-            continue;
-        }
-        else if (isHighChecked && isLowChecked == false && item["high"] < 135 - correction)
-        {
-            continue;
+      for (var item in histories.docs) {
+        if (isHighChecked &&
+            isLowChecked &&
+            (item["high"] < 135 - correction &&
+                item["low"] < 85 - correction)) {
+          continue;
+        } else if (isHighChecked == false &&
+            isLowChecked &&
+            item["low"] < 85 - correction) {
+          continue;
+        } else if (isHighChecked &&
+            isLowChecked == false &&
+            item["high"] < 135 - correction) {
+          continue;
         }
 
         PressureClass temp = PressureClass(
             item["date"], item["high"], item["low"], item["createtime"]);
         setState(() {
-          _listItems.insert(0,temp);
+          _listItems.insert(0, temp);
         });
       }
     }
 
     _calcDataInformation();
-    
   }
 
-  void _calcDataInformation()
-  {
-      if(_listItems == null || _listItems.isEmpty)
-      {
-        setState(() {
-          totalText = "";
-          highText = "";
-          lowText = "";
-        });
-      }
-      else
-      {
-        int totalcnt = _listItems.length;
-        int sumhigh = 0;
-        int sumlow = 0;
+  void _calcDataInformation() {
+    if (_listItems == null || _listItems.isEmpty) {
+      setState(() {
+        totalText = "";
+        highText = "";
+        lowText = "";
+      });
+    } else {
+      int totalcnt = _listItems.length;
+      int sumhigh = 0;
+      int sumlow = 0;
 
-        String avrHigh = "";
-        String avrLow = "";
+      String avrHigh = "";
+      String avrLow = "";
 
-        int lowestHigh = _listItems.first.high;
-        int highestHigh = _listItems.first.high;
-        int lowestLow = _listItems.first.low;
-        int highestLow = _listItems.first.low;        
+      int lowestHigh = _listItems.first.high;
+      int highestHigh = _listItems.first.high;
+      int lowestLow = _listItems.first.low;
+      int highestLow = _listItems.first.low;
 
-        for (var item in _listItems)
-        {
-            sumhigh = sumhigh + item.high;
-            sumlow = sumlow + item.low;
+      for (var item in _listItems) {
+        sumhigh = sumhigh + item.high;
+        sumlow = sumlow + item.low;
 
-            if(lowestHigh > item.high)
-            {
-              lowestHigh = item.high;
-            }
-
-            if(highestHigh < item.high)
-            {
-              highestHigh = item.high;
-            }
-
-            if(lowestLow > item.low)
-            {
-              lowestLow = item.low;
-            }
-
-            if(highestLow < item.low)
-            {
-              highestLow = item.low;
-            }
+        if (lowestHigh > item.high) {
+          lowestHigh = item.high;
         }
 
-        avrHigh = (sumhigh / totalcnt).toStringAsFixed(1);
-        avrLow = (sumlow / totalcnt).toStringAsFixed(1);
+        if (highestHigh < item.high) {
+          highestHigh = item.high;
+        }
 
-        setState(() {
-          totalText = "전체 총 개수 : $totalcnt";
-          highText = "수축기 최고 : $highestHigh,  최저 : $lowestHigh  , 평균 : $avrHigh";
-          lowText = "이완기 최고 : $highestLow,  최저 : $lowestLow  , 평균 : $avrLow";
-        });
+        if (lowestLow > item.low) {
+          lowestLow = item.low;
+        }
+
+        if (highestLow < item.low) {
+          highestLow = item.low;
+        }
       }
+
+      avrHigh = (sumhigh / totalcnt).toStringAsFixed(1);
+      avrLow = (sumlow / totalcnt).toStringAsFixed(1);
+
+      setState(() {
+        totalText = "전체 총 개수 : $totalcnt";
+        highText = "수축기 최고 : $highestHigh,  최저 : $lowestHigh  , 평균 : $avrHigh";
+        lowText = "이완기 최고 : $highestLow,  최저 : $lowestLow  , 평균 : $avrLow";
+      });
+    }
   }
 
   void _addDataToFireStore(PressureClass item) {
@@ -304,7 +292,8 @@ class _MyHomePageState extends State<MyHomePage> {
     if (_listItems.isNotEmpty) {
       var width = MediaQuery.of(context).size.width / 100.0;
       _listItems.forEach((item) {
-        items.insert(0,
+        items.insert(
+          0,
           Container(
             decoration: BoxDecoration(
               border:
@@ -374,8 +363,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         );
-      }); 
-
+      });
     } else {
       items.add(Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -402,7 +390,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
 
-    widget.controller1.text = widget.correction.toString(); 
+    widget.controller1.text = widget.correction.toString();
 
     return Scaffold(
       appBar: AppBar(
@@ -419,7 +407,7 @@ class _MyHomePageState extends State<MyHomePage> {
           const Text("검색 조건 설정"),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [              
+            children: [
               Container(
                 alignment: Alignment.topCenter,
                 padding: const EdgeInsets.only(bottom: 10.0, top: 20.0),
@@ -454,35 +442,58 @@ class _MyHomePageState extends State<MyHomePage> {
                             }
                           });
                         }),
-                        const SizedBox(width: 30,),
-                        SizedBox(width: 60,
-                        child: GestureDetector(onTap: () => FocusScope.of(context).unfocus(),
-                            child:TextField(decoration: const InputDecoration(hintText: "", labelText: "오차값 : "),
-                            onChanged: (text) => { widget.correction = int.parse(text)},
-                            keyboardType: TextInputType.number,
-                            controller: widget.controller1,
-                            ),
-                            )
-                            ,
-                            ),
-                        
-                      IconButton(
-                        onPressed: () => {
-                          setState(() {
-                                  _getDataFromCloudFireStoreWithFind(widget.isHighChecked, widget.isLowChecked, widget.correction);
-                                  })
-                        },
-                        icon: const Icon(Icons.search),
+                    const SizedBox(
+                      width: 30,
+                    ),
+                    SizedBox(
+                      width: 60,
+                      child: GestureDetector(
+                        onTap: () => FocusScope.of(context).unfocus(),
+                        child: TextField(
+                          decoration: const InputDecoration(
+                              hintText: "", labelText: "오차값 : "),
+                          onChanged: (text) =>
+                              {widget.correction = int.parse(text)},
+                          keyboardType: TextInputType.number,
+                          controller: widget.controller1,
+                        ),
                       ),
-                     
+                    ),
+                    IconButton(
+                      onPressed: () => {
+                        setState(() {
+                          _getDataFromCloudFireStoreWithFind(
+                              widget.isHighChecked,
+                              widget.isLowChecked,
+                              widget.correction);
+                        })
+                      },
+                      icon: const Icon(Icons.search),
+                    ),
                   ],
                 ),
-              ),              
+              ),
             ],
           ),
           Text(totalText),
-            Text(highText),
-            Text(lowText),
+          Text(highText),
+          Text(lowText),
+          const SizedBox(
+            height: 20,
+          ),
+          ElevatedButton(
+              onPressed: () => {
+                    if (_listItems != null && _listItems.isEmpty == false)
+                      {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ChartForm(originList: _listItems),
+                            ))
+                      }
+                  },
+              child: const Text("차트 확인")),
           // SizedBox(width: 150,
           // child: Container(alignment: Alignment.center,
           //             decoration: BoxDecoration(
@@ -499,13 +510,13 @@ class _MyHomePageState extends State<MyHomePage> {
           //               ],
           //                ),
           //             ),),
-           
+
           SizedBox(
             height: (MediaQuery.of(context).size.width / 100) * 2,
           ),
           SizedBox(
             width: (MediaQuery.of(context).size.width / 100) * 90,
-            height: (MediaQuery.of(context).size.height / 100) * 65,
+            height: (MediaQuery.of(context).size.height / 100) * 55,
             child: ListView(
               reverse: true,
               controller: widget.scrollController,
